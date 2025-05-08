@@ -1,0 +1,10 @@
+langchain
+langchain_community
+langchain_core
+langchain_deepseek
+langchain_huggingface
+langchain_openai
+langchain_text_splitters
+langgraph
+llama_index
+python-dotenv
