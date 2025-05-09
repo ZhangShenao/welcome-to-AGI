@@ -13,7 +13,7 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import CharacterTextSplitter
 
-from embedding import EMBEDDING
+from embedding import get_embedding_model
 
 # 向量存储路径
 VECTOR_STORE_DIR = "./data/vector_store"
@@ -44,7 +44,8 @@ def indexing() -> None:
 
     # 创建Faiss向量数据库
     # 将chunk进行embedding处理后,存储到向量数据库中
-    vector_store = FAISS.from_documents(chunks, EMBEDDING)
+    embeddings = get_embedding_model()
+    vector_store = FAISS.from_documents(chunks, embeddings)
 
     # 将数据保存到本地磁盘
     vector_store.save_local(VECTOR_STORE_DIR)
