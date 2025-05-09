@@ -10,11 +10,16 @@ Embedding嵌入模块
 """
 import os
 
-import dotenv
+from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 
-# 使用OpenAI Embedding
-dotenv.load_dotenv()
-EMBEDDING = OpenAIEmbeddings(
-    openai_api_base=os.getenv("OPENAI_API_BASE"),
-)
+
+def get_embedding_model() -> Embeddings:
+    """
+    获取Embedding模型
+    """
+
+    # 使用OpenAI Embedding
+    return OpenAIEmbeddings(
+        openai_api_base=os.getenv("OPENAI_API_BASE"),
+    )
