@@ -2,7 +2,7 @@
 """
 @Time    : 2025/5/12 11:10 
 @Author  : ZhangShenao 
-@File    : gemini_image.py 
+@File    : gemini_image_generate.py
 @Desc    : 使用Gemini模型生成图片
 """
 import os
