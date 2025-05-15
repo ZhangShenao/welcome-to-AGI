@@ -12,8 +12,8 @@ import time
 import dotenv
 import requests
 
-# 红楼梦第一回内容
-HONG_LOU_MENG_CHAR_1 = """
+# 红楼梦前两回内容
+HONG_LOU_MENG = """
 以下是四大名著之一——《红楼梦》的第一回和第二回内容。
 第一回 甄士隐梦幻识通灵 贾雨村风尘怀闺秀（清）曹雪芹，（清）高鹗著2019-10-10
 远古时候，女娲娘娘采来三万六千五百零一块顽石用来炼石补天。所有的石头都用上了，最后还剩下一块，女娲娘娘把这块石头扔在大荒山青埂峰下。这块石头觉得自己没能派上用场，因此在山下长吁短叹，觉得自己没有用武之地。
@@ -146,7 +146,7 @@ def send_msg(msg: str) -> str:
                     "content": [
                         {
                             "type": "text",
-                            "text": HONG_LOU_MENG_CHAR_1,
+                            "text": HONG_LOU_MENG,
                             "cache_control": {"type": "ephemeral"},  # 设置缓存
                         },
                     ]
