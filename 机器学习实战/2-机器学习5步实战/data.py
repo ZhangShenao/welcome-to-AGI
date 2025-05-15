@@ -33,7 +33,7 @@ def view_data() -> None:
 
     # 读取CSV数据,并转换成DataFrame格式
     # DataFrame是机器学习中常见的二维表格类型数据结构
-    df_ads = pd.read_csv('易速鲜花微信软文.csv')
+    df_ads = pd.read_csv('微信软文.csv')
 
     # 打印前10行
     print(df_ads.head(10))
@@ -72,7 +72,7 @@ def load_and_clean_data() -> DataFrame | TextFileReader:
     """加载并清洗数据"""
 
     # 读取CSV数据
-    df_ads = pd.read_csv('易速鲜花微信软文.csv')
+    df_ads = pd.read_csv('微信软文.csv')
 
     # 打印原始数据集数量
     print(f"【原始数据集加载完成】数据总量: {len(df_ads)}")
