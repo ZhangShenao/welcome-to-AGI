@@ -5,10 +5,6 @@
 @File    : data.py 
 @Desc    : 数据分析——计算用户的RFM(Recency、Frequency、Monetary)值
 
-RFM是互联网公司普遍采用的用户画像分析指标
-R: 新进度,代表自用户上次消费以来的天数,该指标用于衡量用户的热度
-F: 是消费频率,代表用户是否频繁使用服务,主要用于表征用户黏性
-M: 消费金额,代表用户在一段时间内消费的总金额,可以体现用户价值
 """
 
 import matplotlib.pyplot as plt  # 导入Matplotlib的pyplot模块
@@ -72,6 +68,3 @@ def load_and_clean_data() -> DataFrame:
     print(order_df.describe())
 
     return order_df
-
-
-load_and_clean_data()
