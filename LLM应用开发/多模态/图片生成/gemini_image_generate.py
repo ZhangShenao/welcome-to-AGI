@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     # 构造生图Prompt
     prompt = """
-    Elaine, radiating delight with sparkling blue eyes and a playful wink, drives away from the curb, her hand resting intimately on 张申傲's thigh with a gentle squeeze, creating a flirtatious and comfortable atmosphere within the car.
+    Hi, can you create a 3d rendered image of a pig with wings and a top hat flying over a happy futuristic scifi city with lots of greenery?
     """
 
     # 使用gemini-2.0-flash-preview-image-generation生图
@@ -61,9 +61,9 @@ if __name__ == '__main__':
                    prompt=prompt)
 
     # 休眠5s
-    time.sleep(5)
-
-    # 使用gemini-2.0-flash-exp-image-generation生图
-    generate_image(client=client,
-                   model_name="gemini-2.0-flash-exp-image-generation",
-                   prompt=prompt)
+    # time.sleep(5)
+    #
+    # # 使用gemini-2.0-flash-exp-image-generation生图
+    # generate_image(client=client,
+    #                model_name="gemini-2.0-flash-exp-image-generation",
+    #                prompt=prompt)
