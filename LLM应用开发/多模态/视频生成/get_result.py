@@ -19,6 +19,6 @@ if __name__ == '__main__':
 
     # 获取视频生成任务结果
     resp = client.content_generation.tasks.get(
-        task_id="cgt-20250516172858-97jp9",
+        task_id="cgt-20250523141722-rzcbt",
     )
     print(resp)
