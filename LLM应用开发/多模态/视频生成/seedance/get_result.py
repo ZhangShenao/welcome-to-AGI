@@ -3,7 +3,7 @@
 @Time    : 2025/5/16 17:29 
 @Author  : ZhangShenao 
 @File    : get_result.py 
-@Desc    : 
+@Desc    : 获取视频生成结果
 """
 import os
 
@@ -19,6 +19,6 @@ if __name__ == '__main__':
 
     # 获取视频生成任务结果
     resp = client.content_generation.tasks.get(
-        task_id="cgt-20250523141722-rzcbt",
+        task_id="cgt-20250524163612-5lm8n",
     )
     print(resp)
