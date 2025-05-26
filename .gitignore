@@ -21,3 +21,5 @@ venv
 .env
 
 .vscode
+
+.ipynb_checkpoints
