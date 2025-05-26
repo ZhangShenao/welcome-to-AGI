@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/5/23 14:40 
+@Time    : 2025/5/24 15:31 
 @Author  : ZhangShenao 
-@File    : vidu.py 
-@Desc    : 使用Vidu生图
+@File    : gen_video.py 
+@Desc    : 使用首帧生图
 """
 import base64
 import os
@@ -15,30 +15,30 @@ import requests
 dotenv.load_dotenv()
 
 # 对首尾帧图片进行Base64编码
-with open("./first_frame.png", "rb") as image_file:
+with open("./char.jpeg", "rb") as image_file:
     first_frame = base64.b64encode(image_file.read()).decode('utf-8')
 
-with open("./last_frame.png", "rb") as image_file:
-    last_frame = base64.b64encode(image_file.read()).decode('utf-8')
-
-url = "https://api.vidu.cn/ent/v2/start-end2video"
+url = "https://api.vidu.cn/ent/v2/img2video"
 
 headers = {
     "Authorization": f"{os.getenv("VIDU_API_KEY")}",
     "Content-Type": "application/json"
 }
 
+prompt = """
+The woman opened the car door, got into the car, placed her hand on the steering wheel, and showed a charming smile.
+"""
+
 payload = {
     "model": "vidu2.0",
     "images": [
         f"data:image/png;base64,{first_frame}",
-        f"data:image/png;base64,{last_frame}",
     ],
-    "prompt": "这只可爱的小猪在天上飞累了，它呼扇着翅膀，慢慢降落到下面的小河里，痛快地洗了个澡，又惬意地打了个哈欠。远景切特写。",
+    "prompt": prompt,
     "duration": "4",
     "seed": "0",
     "resolution": "720p",
-    "movement_amplitude": "auto"
+    "movement_amplitude": "large"
 }
 
 try:
