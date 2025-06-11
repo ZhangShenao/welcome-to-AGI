@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋游戏</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5dc;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+        
+        .game-info {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .board-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        #board {
+            background-color: #dcb35c;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #8b4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        
+        button:hover {
+            background-color: #a0522d;
+        }
+        
+        .winner-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d2691e;
+            margin-top: 20px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>五子棋游戏</h1>
+    <div class="game-info">
+        当前玩家: <span id="current-player">黑棋</span>
+    </div>
+    <div class="board-container">
+        <canvas id="board" width="450" height="450"></canvas>
+    </div>
+    <div class="winner-message" id="winner-message"></div>
+    <div class="controls">
+        <button id="restart-btn">重新开始</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('board');
+            const ctx = canvas.getContext('2d');
+            const currentPlayerDisplay = document.getElementById('current-player');
+            const winnerMessage = document.getElementById('winner-message');
+            const restartBtn = document.getElementById('restart-btn');
+            
+            const BOARD_SIZE = 15;
+            const CELL_SIZE = 30;
+            const PIECE_RADIUS = 13;
+            
+            let board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(0));
+            let currentPlayer = 1; // 1 为黑棋，2 为白棋
+            let gameOver = false;
+            
+            // 初始化游戏
+            function initGame() {
+                board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(0));
+                currentPlayer = 1;
+                gameOver = false;
+                currentPlayerDisplay.textContent = '黑棋';
+                currentPlayerDisplay.style.color = 'black';
+                winnerMessage.textContent = '';
+                drawBoard();
+            }
+            
+            // 绘制棋盘
+            function drawBoard() {
+                // 清空画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制棋盘背景
+                ctx.fillStyle = '#dcb35c';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制网格线
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    // 横线
+                    ctx.beginPath();
+                    ctx.moveTo(CELL_SIZE / 2, i * CELL_SIZE + CELL_SIZE / 2);
+                    ctx.lineTo(canvas.width - CELL_SIZE / 2, i * CELL_SIZE + CELL_SIZE / 2);
+                    ctx.stroke();
+                    
+                    // 竖线
+                    ctx.beginPath();
+                    ctx.moveTo(i * CELL_SIZE + CELL_SIZE / 2, CELL_SIZE / 2);
+                    ctx.lineTo(i * CELL_SIZE + CELL_SIZE / 2, canvas.height - CELL_SIZE / 2);
+                    ctx.stroke();
+                }
+                
+                // 绘制天元和星位
+                const starPoints = [3, 7, 11];
+                ctx.fillStyle = '#000';
+                
+                starPoints.forEach(x => {
+                    starPoints.forEach(y => {
+                        if (x === 7 && y === 7) {
+                            // 天元
+                            ctx.beginPath();
+                            ctx.arc(
+                                x * CELL_SIZE + CELL_SIZE / 2,
+                                y * CELL_SIZE + CELL_SIZE / 2,
+                                5, 0, Math.PI * 2
+                            );
+                            ctx.fill();
+                        } else {
+                            // 星位
+                            ctx.beginPath();
+                            ctx.arc(
+                                x * CELL_SIZE + CELL_SIZE / 2,
+                                y * CELL_SIZE + CELL_SIZE / 2,
+                                3, 0, Math.PI * 2
+                            );
+                            ctx.fill();
+                        }
+                    });
+                });
+                
+                // 绘制棋子
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    for (let j = 0; j < BOARD_SIZE; j++) {
+                        if (board[i][j] === 1) {
+                            drawPiece(j, i, 'black');
+                        } else if (board[i][j] === 2) {
+                            drawPiece(j, i, 'white');
+                        }
+                    }
+                }
+            }
+            
+            // 绘制棋子
+            function drawPiece(x, y, color) {
+                ctx.beginPath();
+                ctx.arc(
+                    x * CELL_SIZE + CELL_SIZE / 2,
+                    y * CELL_SIZE + CELL_SIZE / 2,
+                    PIECE_RADIUS, 0, Math.PI * 2
+                );
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                if (color === 'white') {
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            
+            // 检查是否获胜
+            function checkWin(x, y) {
+                const directions = [
+                    [1, 0],   // 水平
+                    [0, 1],   // 垂直
+                    [1, 1],   // 对角线
+                    [1, -1]   // 反对角线
+                ];
+                
+                for (const [dx, dy] of directions) {
+                    let count = 1;
+                    
+                    // 正向检查
+                    for (let i = 1; i < 5; i++) {
+                        const nx = x + dx * i;
+                        const ny = y + dy * i;
+                        
+                        if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE || board[ny][nx] !== currentPlayer) {
+                            break;
+                        }
+                        
+                        count++;
+                    }
+                    
+                    // 反向检查
+                    for (let i = 1; i < 5; i++) {
+                        const nx = x - dx * i;
+                        const ny = y - dy * i;
+                        
+                        if (nx < 0 || nx >= BOARD_SIZE || ny < 0 || ny >= BOARD_SIZE || board[ny][nx] !== currentPlayer) {
+                            break;
+                        }
+                        
+                        count++;
+                    }
+                    
+                    if (count >= 5) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            // 处理点击事件
+            function handleClick(event) {
+                if (gameOver) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((event.clientX - rect.left) / CELL_SIZE);
+                const y = Math.floor((event.clientY - rect.top) / CELL_SIZE);
+                
+                // 检查是否在棋盘范围内且该位置为空
+                if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && board[y][x] === 0) {
+                    board[y][x] = currentPlayer;
+                    drawBoard();
+                    
+                    // 检查是否获胜
+                    if (checkWin(x, y)) {
+                        gameOver = true;
+                        const winner = currentPlayer === 1 ? '黑棋' : '白棋';
+                        winnerMessage.textContent = `${winner}获胜！`;
+                        return;
+                    }
+                    
+                    // 切换玩家
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                    currentPlayerDisplay.textContent = currentPlayer === 1 ? '黑棋' : '白棋';
+                    currentPlayerDisplay.style.color = currentPlayer === 1 ? 'black' : 'white';
+                }
+            }
+            
+            // 事件监听
+            canvas.addEventListener('click', handleClick);
+            restartBtn.addEventListener('click', initGame);
+            
+            // 初始化游戏
+            initGame();
+        });
+    </script>
+</body>
+</html>
