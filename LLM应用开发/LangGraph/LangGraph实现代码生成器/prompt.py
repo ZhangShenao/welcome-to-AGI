@@ -14,9 +14,7 @@ SYSTEM_PROMPT = """
 
 # 生成Model实体类的Prompt
 MODEL_PROMPT = """
-#模型定义如下：
-1.用户模型，包含字段：UserID(int), UserName(string), UserEmail(string)
-生成上述模型对应的的Go语言的 struct结构体。struct名称示例：UserModel
+生成用户模型的实体类代码
 """
 
 # 生成Router路由的Prompt

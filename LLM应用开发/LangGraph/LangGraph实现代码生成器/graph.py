@@ -45,16 +45,18 @@ if __name__ == '__main__':
     # 执行Graph,获取结果
     generated_code = graph.invoke(init_state)
 
-    # 打印生成的代码
-    # 将generated_code中的内容保存到文件中
-    with open("./models.go", "w") as f:
-        f.write(generated_code["models"][0])
-    print("成功生成Models代码，已保存到 models.go 文件中！")
-
+    # 将生成代码的结果保存到文件中
     with open("./main.go", "w") as f:
+        # main函数
         f.write(generated_code["main_function"])
         f.write("\n")
+
+        # 实体类定义
+        f.write(generated_code["models"][0])
+        f.write("\n")
+
+        # Handler
         for handler in generated_code["handlers"]:
             f.write(handler)
 
-    print("成功生成main代码，已保存到 main.go 文件中！")
+    print("代码生成成功，已保存到 main.go 文件中！")
