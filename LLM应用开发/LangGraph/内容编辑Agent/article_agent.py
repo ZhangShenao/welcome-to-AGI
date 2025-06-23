@@ -63,6 +63,7 @@ def write_article(agent: CompiledStateGraph, topic: str) -> ArticleState:
     )
 
     # 执行Graph,返回生成的最终状态
+    print(f"智能编辑Agent开始撰写文章, topic: {topic}")
     return agent.invoke(init_state)
 
 
