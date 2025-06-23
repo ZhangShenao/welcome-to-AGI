@@ -2,7 +2,7 @@
 """
 @Time    : 2025/6/16 15:46 
 @Author  : ZhangShenao 
-@File    : graph.py 
+@File    : article_agent.py
 @Desc    : 构造Graph并执行
 """
 from langgraph.constants import START, END
