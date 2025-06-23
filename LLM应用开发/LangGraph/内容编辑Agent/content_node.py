@@ -79,6 +79,8 @@ def content_node(state: ArticleState) -> ArticleState:
 
     # 获取DeepSeek客户端
     deepseek = get_deepseek()
+
+    # 将DeepSeek绑定工具列表
     deepseek = deepseek.bind_tools(TOOLS)
 
     # 调用DeepSeek,获取结果
