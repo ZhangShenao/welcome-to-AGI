@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/4/16 15:19 
-@Author  : ZhangShenao 
+@Time    : 2025/4/16 15:19
+@Author  : ZhangShenao
 @File    : video_process.py
 @Desc    : 视频处理
 """
