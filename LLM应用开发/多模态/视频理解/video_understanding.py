@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/4/16 15:59 
-@Author  : ZhangShenao 
-@File    : video_understanding.py 
+@Time    : 2025/4/16 15:59
+@Author  : ZhangShenao
+@File    : video_understanding.py
 @Desc    : 视频理解
 """
 import os
@@ -15,9 +15,9 @@ from openai import OpenAI
 dotenv.load_dotenv()
 
 # 创建OpenAI客户端
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"),
-                base_url=os.getenv("OPENAI_API_BASE")
-                )
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_API_BASE")
+)
 
 
 def introduction(frames: List) -> str:
@@ -29,15 +29,28 @@ def introduction(frames: List) -> str:
 
     # 使用GPT-4o模型,生成视频介绍
     response = client.chat.completions.create(
-        model='gpt-4o',
+        model="gpt-4o",
         messages=[
-            {"role": "system", "content": "你是一位资深的内容编辑。请以Markdown格式，生成视频的介绍。"},
-            {"role": "user", "content": [
-                "下面是视频的图像帧",
-                *map(lambda x: {"type": "image_url",
-                                "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}},
-                     frames)
-            ]},
+            {
+                "role": "system",
+                "content": "你是一位资深的内容编辑。请以Markdown格式，生成视频的介绍。",
+            },
+            {
+                "role": "user",
+                "content": [
+                    "下面是视频的图像帧",
+                    *map(
+                        lambda x: {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpg;base64,{x}",
+                                "detail": "low",
+                            },
+                        },
+                        frames,
+                    ),
+                ],
+            },
         ],
         temperature=0,
     )
