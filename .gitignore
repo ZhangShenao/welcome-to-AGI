@@ -23,3 +23,5 @@ venv
 .vscode
 
 .ipynb_checkpoints
+
+.cache/
