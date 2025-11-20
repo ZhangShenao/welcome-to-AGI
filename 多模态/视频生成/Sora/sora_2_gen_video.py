@@ -32,7 +32,7 @@ print(f"开始生成视频")
 video = client.videos.create(
     prompt=prompt,
     seconds="8",
-    size="1280x720",
+    size="720x1280",
 )
 video_id = video.id
 print(f"视频任务创建成功，视频ID: {video_id}")

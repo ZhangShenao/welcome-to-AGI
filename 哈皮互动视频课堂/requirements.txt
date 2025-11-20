@@ -3,3 +3,4 @@ google-genai
 python-dotenv
 flask
 flask-cors
+moviepy>=1.0.3
