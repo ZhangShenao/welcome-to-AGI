@@ -24,7 +24,12 @@ class InteractiveVideoEducation:
         # 初始化各个生成器
         self.story_generator = StoryGenerator(os.getenv("DEEPSEEK_API_KEY"))
         self.image_generator = ImageGenerator(os.getenv("GOOGLE_API_KEY"))
-        self.video_generator = VideoGenerator(os.getenv("GOOGLE_API_KEY"))
+        # 传递image_generator到video_generator，用于生成分镜首帧图片
+        # 使用GOOGLE_API_KEY，因为Veo3.1也是Google的API
+        self.video_generator = VideoGenerator(
+            os.getenv("GOOGLE_API_KEY"), 
+            image_generator=self.image_generator
+        )
 
     def create_complete_story_video(self, user_prompt: str) -> str:
         """创建完整的故事视频"""
@@ -68,8 +73,8 @@ class InteractiveVideoEducation:
         return final_video_path
 
     def create_complete_story_video_with_logging(
-        self, user_prompt: str, log_callback=None
-    ) -> str:
+        self, user_prompt: str, log_callback=None, segment_callback=None, script_callback=None, character_callback=None
+    ) -> dict:
         """创建完整的故事视频（支持日志回调）"""
 
         def log(message):
@@ -111,35 +116,48 @@ class InteractiveVideoEducation:
             log("❌ 人物形象生成失败")
             return None
         log(f"✅ 人物形象图片生成完成: {character_image}")
+        
+        # 通知前端角色图片生成完成
+        if character_callback:
+            character_callback(character_image, story_data["character_description"])
 
-        # Step 4: 生成第一段视频
-        log("🎬 正在生成第一段视频...")
-        log(f"📝 剧情内容: {story_data['story_segments'][0]}")
-        current_video = self.video_generator.generate_first_video_segment(
-            character_image, story_data["story_segments"][0]
+        # Step 4: 并行生成分镜脚本
+        log("📽️ 正在并行生成分镜脚本...")
+        shot_scripts = self.story_generator.generate_shot_scripts(
+            story_segments=story_data["story_segments"],
+            character_description=story_data["character_description"],
+            progress_callback=log,
+            script_callback=script_callback
         )
-        if not current_video:
-            log("❌ 第一段视频生成失败")
+        if not shot_scripts:
+            log("❌ 分镜脚本生成失败")
             return None
-        log(f"✅ 第一段视频生成完成")
+        
+        log("✅ 所有分镜脚本生成完成")
 
-        # Step 5: 扩展后续视频段
-        segments_count = len(story_data["story_segments"])
-        for i, segment in enumerate(story_data["story_segments"][1:], 2):
-            log(f"🎬 正在生成第{i}段视频...")
-            log(f"📝 剧情内容: {segment}")
-            current_video = self.video_generator.extend_video(current_video, segment, i)
-            if not current_video:
-                log(f"❌ 第{i}段视频生成失败")
-                return None
-            log(f"✅ 第{i}段视频生成完成")
+        # Step 5: 并行生成所有分镜视频（使用分镜脚本）
+        video_paths = self.video_generator.generate_video_segments_parallel(
+            character_image_path=character_image,
+            shot_scripts=shot_scripts,
+            progress_callback=log,
+            segment_callback=segment_callback,
+        )
 
-        # 返回最后一段视频的文件路径
-        final_video_path = f"story_part{segments_count}.mp4"
+        # 检查是否有生成失败的视频
+        failed_segments = [i + 1 for i, path in enumerate(video_paths) if path is None]
+        if failed_segments:
+            log(f"⚠️ 以下分镜视频生成失败: {failed_segments}")
+        
+        # 返回所有分镜视频路径（用于后续拼接）
         log("=" * 50)
-        log("🎉 完整故事视频创建成功！")
-        log(f"📁 最终视频文件: {final_video_path}")
-        return final_video_path
+        log("🎉 所有分镜视频生成完成！")
+        return {
+            "character_image": character_image,
+            "character_description": story_data["character_description"],
+            "video_segments": video_paths,
+            "story_data": story_data,
+            "shot_scripts": shot_scripts,
+        }
 
     def run(self):
         """运行主程序"""
